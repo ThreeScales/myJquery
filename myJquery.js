@@ -4,6 +4,7 @@
 	var Kodo = function (selector) {
 		return new Kodo.prototype.init(selector);
 	}
+	/**获取dom元素并对其进行操作 */
 	Kodo.prototype = {
 		constructor: Kodo,
 		length: 0,
@@ -13,6 +14,18 @@
 		init: function (selector) {
 			if (!selector) {
 				return this;
+			}
+			//判断参数类型如果为select 则为选择器
+			if (typeof selector == 'object') {
+				for (var i = 0; i < selector.length; i++) {
+					this[i] = selector[i];
+				}
+				this.length = selector.length;
+				return this;
+				//如果类型为function则立即执行化传入方法
+			} else if (typeof selector == 'function') {
+				Kodo.ready(selector);
+				return;
 			}
 
 			var selector = selector.trim(),
@@ -36,6 +49,8 @@
 				this.length = elm.length;
 				return this;
 			}
+
+
 		},
 		//修改css
 		css: function (attr, val) {
@@ -79,11 +94,126 @@
 	}
 	//修改prototype指向
 	Kodo.prototype.init.prototype = Kodo.prototype;
+	
+	
+	/**下面为静态工具方法 */
+	//初始化方法
+	Kodo.ready = function (fn) {
+		doc.addEventListener('DOMContentLoaded', function () {
+			fn && fn();
+		}, false);
+		doc.removeEventListener('DOMContentLoaded', fn, true);
+	}
 
 	Kodo.ajax = function () {
 		console.log(this);
 	}
+	
+	//遍历方法
+	Kodo.each = function (obj, callback) {
+		var len = obj.length,
+			constru = obj.constructor,
+			i = 0;
 
+		if (constru == w.$) {
+			for (; i < len; i++) {
+				var val = callback.call(obj[i], i, obj[i]);
+				if (val === false) break;
+			}
+		} else if (isArray(obj)) {
+			for (; i < len; i++) {
+				var val = callback.call(obj[i], i, obj[i]);
+				if (val === false) break;
+			}
+		} else {
+			for (i in obj) {
+				var val = callback.call(obj[i], i, obj[i]);
+				if (val === false) break;
+			}
+		}
+	}
+	
+	//请求数据
+	Kodo.get = function (url, sucBack, complete) {
+		var options = {
+			url: url,
+			success: sucBack,
+			complete: complete
+		};
+		ajax(options);
+	};
+	Kodo.post = function (url, data, sucback, complete) {
+		var options = {
+			url: url,
+			type: "POST",
+			data: data,
+			sucback: sucback,
+			complete: complete
+		};
+		ajax(options);
+	};
+	
+	/** 内部方法*/
+	//判断出入对象是否为数组
+	function isArray(obj) {
+		return Array.isArray(obj);
+	}
+	
+	//ajax
+	function ajax(options) {
+		var defaultOptions = {
+			url: false,
+			type: "GET",
+			data: "false",
+			success: false,
+			complete: false
+		};
+
+		for (i in defaultOptions) {
+			if (options[i] === undefined) {
+				options[i] === defaultOptions[i];
+			}
+		}
+
+		var xhr = new XMLHttpRequest();
+		var url = options.url;
+		xhr.open(options.type, url);
+		xhr.onreadystatechange = onStateChange;
+
+		if (options.type === 'POST') {
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		}
+
+		xhr.send(options.data ? options.data : null);
+
+		function onStateChange() {
+			if (xhr.readyState == 4) {
+				var result,
+					status = xhr.status;
+
+				if ((status >= 200 && status < 300) || status == 304) {
+					result = xhr.responseText;
+					if (window.JSON) {
+						result = JSON.parse(result);
+					} else {
+						result = eval('(' + result + ')');
+					}
+					ajaxSuccess(result, xhr)
+				} else {
+					console.log("ERR", xhr.status);
+				}
+			}
+		}
+		function ajaxSuccess(data, xhr) {
+			var status = 'success';
+			options.success && options.success(data, options, status, xhr)
+			ajaxComplete(status)
+		}
+		function ajaxComplete(status) {
+			options.complete && options.complete(status);
+		}
+	}
+	
+	//暴漏到外面的调用关键字
 	window.$ = Kodo;
-
 })(window, document);
