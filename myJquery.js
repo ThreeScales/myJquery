@@ -55,17 +55,25 @@
 		//修改css
 		css: function (attr, val) {
 			for (var i = 0; i < this.length; i++) {
-				if (arguments.length == 1) {
-					//若传一个参数，则返回属性值
-					return getComputedStyle(this[i], null)[attr];
-				}
-				this[i].style[attr] = val;
+				var _this = this[i];
+				if(typeof attr == 'string'){
+					if (arguments.length == 1) {
+						//若传一个参数，则返回属性值
+						return getComputedStyle(_this, null)[attr];
+					}	
+					_this.style[attr] = val;
+				}else {
+					$.each(function(attr,val){
+						_this.style.cssText += '' + attr + ':' + val +';';
+					});
+				}		
 			}
 			return this;
 		},
 		//判断是否有某个class
 		hasClass: function (cls) {
 			var reg = new RegExp('(\\s|^)' + cls + '(\\s|^)');
+			var arr = [];
 			for (var i = 0; i < this.length; i++) {
 				if (this[i].className.match(reg))
 					return true;
@@ -88,6 +96,71 @@
 			for (var i = 0; i < this.length; i++) {
 				if (this[i].className.match(reg))
 					this[i].className = this[i].className.replace(cls, '');
+			}
+			return this;
+		},
+		//修改属性
+		attr: function(attr,val){
+			for(var i = 0; i<this.length;i++){
+				if(typeof attr == 'string'){
+					if(arguments.length == 1){
+						return this[i].getAttribute(attr);
+					}
+					this[i].setAttribute(attr,val);
+				}else{
+					var _this = this[i];
+					$.each(function(attr,val){
+						_this.setAttribute(attr,val);
+					});
+				}
+			}
+		},
+		//修改显示的文字
+		html: function(value){
+			if(value === undefined && this[0].nodeType ===1){
+				return this[0].innerHTML;
+			}else{
+				for (var i = 0; i< this.length; i++){
+					this[i].innerHTML = value;
+				}
+			}
+			return this;
+		},
+		//修改显示的title
+		text: function(value){
+			if(value === undefined && this[0].nodeType ===1){
+				return this[0].innerText;
+			}else{
+				for (var i = 0; i< this.length; i++){
+					this[i].innerText = value;
+				}
+			}
+			return this;
+		},
+		//当前节点内新增内容
+		append:function(str){
+			for(var i = 0; i<this.length;i++){
+				domAppend(this[i],'beforeend',str);
+			}
+			return this;
+		},
+		//当前节点内最前面新增内容
+		before:function(str){
+			for(var i = 0; i<this.length;i++){
+				domAppend(this[i],'beforeBegin',str);
+			}
+			return this;
+		},
+		//当前节点后新增内容
+		after:function(str){
+			for(var i = 0; i<this.length;i++){
+				domAppend(this[i],'afterEnd',str);
+			}
+			return this;
+		},
+		remove:function(){
+			for(var i =0;i<this.length;i++){
+				this[i].parentNode.removeChild(this[i]);
 			}
 			return this;
 		}
@@ -114,7 +187,6 @@
 		var len = obj.length,
 			constru = obj.constructor,
 			i = 0;
-
 		if (constru == w.$) {
 			for (; i < len; i++) {
 				var val = callback.call(obj[i], i, obj[i]);
@@ -212,6 +284,11 @@
 		function ajaxComplete(status) {
 			options.complete && options.complete(status);
 		}
+	}
+	
+	//实现append after before操作
+	function domAppend(elm, type, str){
+		elm.insertAdjacentHTML(type, str);
 	}
 	
 	//暴漏到外面的调用关键字
