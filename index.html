@@ -3,6 +3,7 @@
 
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<title></title>
 	<style>
 		.a {
@@ -10,8 +11,10 @@
 		}
 	</style>
 	<script src="myJquery.js" type="text/javascript"></script>
+	<link href="myJquery.css" rel="stylesheet" type="text/css"/>
 	<script type="text/javascript">
 	$(function(){
+		$.loadingShow();
 		$("h1").attr("style","width:2px;");
 		var age = [
 			1,2,3,4,5,6
@@ -26,6 +29,7 @@
 		$.each(person,function(key,value){
 			console.log(key+","+value);
 		})
+		// $.loadingHidden();
 	});
 	</script>
 </head>
