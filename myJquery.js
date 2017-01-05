@@ -37,7 +37,7 @@
 			if (selector.charAt(0) == '#' && !selector.match('\\s')) {
 				selector = selector.substring(1);
 				this.selector = selector;
-				elm = document.getElementById(selector);
+				elm = doc.getElementById(selector);
 				this[0] = elm;
 				this.length = 1;
 				return this;
@@ -52,8 +52,6 @@
 				this.length = elm.length;
 				return this;
 			}
-
-
 		},
 		//修改css
 		css: function (attr, val) {
@@ -240,6 +238,47 @@
 		loadingLayer.style.display = 'none';
 	}
 	
+	//获取url里的参数
+	Kodo.getUrlParam = function(name) {
+		var str=window.location.search; 
+		var index=str.indexOf("?"+name+"=");
+		if(index==-1){
+			index=str.indexOf("&"+name+"=");
+		}
+		if(index==-1){
+			return null;
+		}
+		var end=str.indexOf("&",index+1 );
+		if(end==-1){
+			return str.substring(index+2+name.length);
+		}else{
+			return str.substring(index+2+name.length, end);
+		}
+	}
+
+	//判断当前所在浏览器
+	Kodo.browser = {
+		versions:function(){
+	        var u = navigator.userAgent, app = navigator.appVersion;
+	        return {
+	            trident: u.indexOf('Trident') > -1, //IE内核
+	            presto: u.indexOf('Presto') > -1, //opera内核
+	            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+	            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1,//火狐内核
+	            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+	            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+	            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+	            iPhone: u.indexOf('iPhone') > -1 , //是否为iPhone或者QQHD浏览器
+	            iPad: u.indexOf('iPad') > -1, //是否iPad
+	            webApp: u.indexOf('Safari') == -1, //是否web应该程序，没有头部与底部
+	            weixin: u.indexOf('MicroMessenger') > -1, //是否微信 （2015-01-22新增）
+	            qq: u.match(/\sQQ/i) == " qq" //是否QQ
+	        };
+	    }(),
+	    language:(navigator.browserLanguage || navigator.language).toLowerCase()
+	}
+
+
 	/** 内部方法*/
 	//判断出入对象是否为数组
 	function isArray(obj) {
