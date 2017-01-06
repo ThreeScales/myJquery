@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+	<html>
+
+	<head>
+	<meta charset="UTF-8" >
+		<meta name="viewport" content= "initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+			<title></title>
+		<script type= "text/javascript" src= "http://www.minijyb.cn/mitrade/js/jquery/jquery.js" > </script>
+				<script type= "text/javascript" >
+	// function getData(){
+	//  	$.ajax({
+    //          type: "get",
+    //          async: false,
+    //          url: "http://www.niu123456.cn/mitrade/wechat/getUserById?userId=326538",
+    //          dataType: "jsonp",
+    //          success: function(json){
+    //              alert(json);
+    //          },
+    //          error: function(){
+    //              alert('fail');
+    //          }
+    //      });
+    //  }
+	//  getData();
+	  // 得到航班信息查询结果后的回调函数
+var getUserInfo = function (data) {
+	alert("通过远程调用获取的数据是："+data);
+};
+function getJsonpData(url)(){
+	// 创建script标签，设置其属性
+	var script = document.createElement('script');
+	script.setAttribute('src', url);
+	// 把script标签加入head，此时调用开始
+	document.getElementsByTagName('head')[0].appendChild(script);
+}
+
+getJsonpData("http://www.niu123456.cn/mitrade/wechat/getUserById?userId=326538&callback=getUserInfo")
+
+// $(function(){
+// 	$.loadingShow();
+// 	$("h1").attr("style","width:2px;");
+// 	var age = [
+// 		1,2,3,4,5,6
+// 	];
+// 	$.each(age,function(index,val){
+// 		console.log(val);
+// 	});
+// 	var person = {
+// 		age : 11,
+// 		name : 'jack'
+// 	};
+// 	$.each(person,function(key,value){
+// 		console.log(key+","+value);
+// 	})
+// 	// $.loadingHidden();
+// });
+console.log("i1="+i);
+for(var i =1;i<10;i++){
+
+}
+console.log("i2="+i);
+</script>
+	< /head>
+
+	< body >
+	<h1 id='test' style= "width:1px" > aaa < /h1>
+		< h1 id= 'test1' style= "width:1px" > aaa < /h1>
+			< /body>
+
+			< /html>
